@@ -56,8 +56,8 @@ def apply_chat_template(toker, messages):
 
 def main():
 
-	save_model_dir = os.environ['SCRATCH'] + "/model_ft_2_nl"
-	final_model_dir = os.environ['FAST'] + "/rpisano1/tokenized_dataset_2_chat_no_lables/final_model"
+	save_model_dir = os.environ['SCRATCH'] + "/model_ft_2_last"
+	final_model_dir = os.environ['FAST'] + "/rpisano1/tokenized_dataset_2_2_chat_mask_off/checkpoint-10531"
 	local_model_path = os.environ['WORK'] + "/rpisano1/models"
 
 	base_model = AutoModelForCausalLM.from_pretrained(
@@ -87,7 +87,7 @@ def main():
 
 	data_dir = os.environ['FAST'] + "/rpisano1/dataset/ProcessBench"
 
-	output_dir = os.environ['FAST'] + "/rpisano1/ProcessBench/outputs/ft2_no_labels"
+	output_dir = os.environ['FAST'] + "/rpisano1/ProcessBench/outputs/ft2_last"
 
 	#final_model_dir = os.environ['FAST'] + "/rpisano1/checkpoints/final_model"
 
