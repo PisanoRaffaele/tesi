@@ -44,25 +44,26 @@ def prepare_input_boxed(input_d):
 
 Your task is to review and critique the solution paragraph by paragraph. Once you identify an error in a paragraph, return the index of the paragraph where the earliest error occurs. Otherwise, return the index of -1 (which typically denotes "not found").
 
-Please put your final answer (i.e., the index) in \boxed{{}}."""
+"""+r"""Please put your final answer (i.e., the index) in \boxed{{}}."""
     messages = [{'role': 'user', 'content': prompt}]
     return messages
 
 
 def apply_chat_template(toker, messages):
     input_prompt = toker.apply_chat_template(messages, add_generation_prompt=True, tokenize=False)
+    #print(f"Input prompt: {input_prompt}")
     return toker(input_prompt, add_special_tokens=False).input_ids
 
 def main():
 
-	save_model_dir = os.environ['SCRATCH'] + "/model_ft_3"
-	final_model_dir = os.environ['FAST'] + "/rpisano1/checkpoints_3/final_model"
+	save_model_dir = os.environ['SCRATCH'] + "/model_ft_2_nl"
+	final_model_dir = os.environ['FAST'] + "/rpisano1/tokenized_dataset_2_chat_no_lables/final_model"
 	local_model_path = os.environ['WORK'] + "/rpisano1/models"
 
 	base_model = AutoModelForCausalLM.from_pretrained(
 		local_model_path,
 		trust_remote_code=True,
-		torch_dtype=torch.float16,
+		#torch_dtype=torch.float16,
 		#device_map="auto",
 		local_files_only=True
 	)
@@ -86,11 +87,11 @@ def main():
 
 	data_dir = os.environ['FAST'] + "/rpisano1/dataset/ProcessBench"
 
-	output_dir = os.environ['FAST'] + "/rpisano1/ProcessBench/outputs/ft2"
+	output_dir = os.environ['FAST'] + "/rpisano1/ProcessBench/outputs/ft2_no_labels"
 
 	#final_model_dir = os.environ['FAST'] + "/rpisano1/checkpoints/final_model"
 
-	use_voting = False  # Set to False to disable voting
+	use_voting = False  #Set to False to disable voting
 
 	llm = LLM(
 			model=save_model_dir, tokenizer=local_model_path,
