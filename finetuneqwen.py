@@ -8,7 +8,7 @@ import os
 print("🚀 Inizio script...")
 
 data_dir = os.environ['FAST'] + "/rpisano1/dataset/"
-checkpoint_dir = os.environ['FAST'] + "/rpisano1/checkpoints_2_2_chat_mask_off/"
+checkpoint_dir = os.environ['FAST'] + "/rpisano1/checkpoints_2_2_chat_mask_on/"
 
 local_model_path = os.environ['WORK'] + "/rpisano1/models/"
 
@@ -140,10 +140,7 @@ def preprocess_function(example):
 	labels[start_idx:end_idx] = tokenize_label
 
 	attention_mask = [1] * length
-	# from padding to the end mask is 0
-	num_padding = length - end_idx
-	if num_padding > 0:
-		attention_mask[end_idx:] = [0] * num_padding
+	attention_mask[start_idx:] = [0] * (length - start_idx)
 	tokenized_inputs = {'input_ids': input_ids, 'labels': labels, 'attention_mask': attention_mask}
 
 	return tokenized_inputs
@@ -163,7 +160,7 @@ tokenized_dataset = tokenized_dataset.map(preprocess_function, remove_columns=da
 
 print(tokenized_dataset["train"].column_names)
 
-tokenized_dataset.save_to_disk(f"{data_dir}/tokenized_dataset_2_chat_mask_off")
+tokenized_dataset.save_to_disk(f"{data_dir}/tokenized_dataset_2_chat_mask_on")
 
 # tokenized_dataset = load_from_disk(f"{data_dir}/tokenized_dataset_2_2")
 
