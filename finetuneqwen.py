@@ -157,8 +157,8 @@ dataset = dataset.filter(
 
 dataset = dataset.shuffle(seed=42)
 
-subset = dataset.select(range(1500000, len(dataset)))
-tokenized_dataset = dataset.train_test_split(test_size=0.5, seed=42)
+subset = dataset.select(range(2000000, len(dataset)))
+tokenized_dataset = subset.train_test_split(test_size=0.5, seed=42)
 tokenized_dataset = tokenized_dataset.map(preprocess_function, remove_columns=dataset.column_names, num_proc=32)
 
 print(tokenized_dataset["train"].column_names)
