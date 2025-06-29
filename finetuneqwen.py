@@ -8,7 +8,7 @@ import os
 print("🚀 Inizio script...")
 
 data_dir = os.environ['FAST'] + "/rpisano1/dataset/"
-checkpoint_dir = os.environ['FAST'] + "/rpisano1/checkpoints_2_2_chat_mask_on/"
+checkpoint_dir = os.environ['FAST'] + "/rpisano1/tokenized_dataset_2_chat_no_labels/"
 
 local_model_path = os.environ['WORK'] + "/rpisano1/models/"
 
@@ -97,53 +97,16 @@ def preprocess_function(example):
 		{"role": "assistant", "content": label_text},
 	]
 
-	input_ids = tokenizer.apply_chat_template(
-		messages,
+	prompt_text = tokenizer.apply_chat_template(messages, tokenize=False)
+
+	encoded = tokenizer(
+		prompt_text,
 		truncation=True,
-		padding='max_length',
+		padding="max_length",
 		max_length=835,
 	)
-	check = tokenizer.decode(input_ids, skip_special_tokens=False)
-	if label_text not in check:
-		raise ValueError(f"Label text '{label_text}' not found in the tokenized input: {check}")
 
-
-	def find_subsequence(lst, sub):
-		len1, len2 = len(lst), len(sub)
-		indices = []
-		for i in range(len1 - len2 + 1):
-			if lst[i:i+len2] == sub:
-				indices.append(i)
-		return indices
-
-	length = len(input_ids)
-	labels= [-100] * length
-
-	tokenize_label = tokenizer.encode(label_text, add_special_tokens=False)
-	indices = find_subsequence(input_ids, tokenize_label)
-
-	if len(indices) == 0:
-		print(input_ids[-(100):])
-		print(f"Label text: {label_text}")
-		raise ValueError("Label text non trovato nell'input_ids")
-	start_idx = indices[0]
-
-	if start_idx + len(tokenize_label) > 835:
-		limit = 835 - start_idx
-		if example['info'] == "Math-Shepherd":
-			tokenize_label = tokenize_label[:limit]
-			print(f"Truncated label_ids to match limit length: {len(tokenize_label)}")
-		else:
-			raise ValueError("Lunghezza del marcatore non corrisponde alla lunghezza dell'etichetta")
-	end_idx = start_idx + len(tokenize_label)
-
-	labels[start_idx:end_idx] = tokenize_label
-
-	attention_mask = [1] * length
-	attention_mask[start_idx:] = [0] * (length - start_idx)
-	tokenized_inputs = {'input_ids': input_ids, 'labels': labels, 'attention_mask': attention_mask}
-
-	return tokenized_inputs
+	return encoded
 
 print("📚 Caricamento dataset...")
 
@@ -160,7 +123,7 @@ tokenized_dataset = tokenized_dataset.map(preprocess_function, remove_columns=da
 
 print(tokenized_dataset["train"].column_names)
 
-tokenized_dataset.save_to_disk(f"{data_dir}/tokenized_dataset_2_chat_mask_on")
+tokenized_dataset.save_to_disk(f"{data_dir}/tokenized_dataset_2_chat_no_labels")
 
 # tokenized_dataset = load_from_disk(f"{data_dir}/tokenized_dataset_2_2")
 
