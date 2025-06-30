@@ -8,7 +8,7 @@ import os
 print("🚀 Inizio script...")
 
 data_dir = os.environ['FAST'] + "/rpisano1/dataset/"
-checkpoint_dir = os.environ['FAST'] + "/rpisano1/checkpoints_2_4/"
+checkpoint_dir = os.environ['FAST'] + "/rpisano1/checkpoints_2_notpddl/"
 
 local_model_path = os.environ['WORK'] + "/rpisano1/models"
 
@@ -51,7 +51,7 @@ def preprocess_function(example):
         input_text,
         truncation=True,
         padding='max_length',
-        max_length=806,
+        max_length=815,
     )
     length = len(tokenized_inputs['input_ids'])
     tokenized_inputs['labels'] = [-100] * length
@@ -89,9 +89,12 @@ print("📚 Caricamento dataset...")
 dataset = load_dataset("json", data_files=os.path.join(data_dir, json_file), split="train")
 
 tokenized_dataset = dataset.train_test_split(test_size=0.1)
+dataset = dataset.filter(
+    lambda x: (x["info"] == "Math-Shepherd" or x['info'] == "PRM800k")
+)
 tokenized_dataset = tokenized_dataset.map(preprocess_function, remove_columns=dataset.column_names, num_proc=32)
 
-tokenized_dataset.save_to_disk(f"{data_dir}/tokenized_dataset_2_4")
+tokenized_dataset.save_to_disk(f"{data_dir}/checkpoints_2_notpddl")
 
 # tokenized_dataset = load_from_disk(f"{data_dir}/tokenized_dataset")
 
@@ -120,7 +123,7 @@ tokenized_dataset.save_to_disk(f"{data_dir}/tokenized_dataset_2_4")
 #     num_train_epochs=2,
 #     per_device_train_batch_size=4,
 #     per_device_eval_batch_size=4,
-#     warmup_steps=250,
+#     warmup_steps=300,
 #     weight_decay=0.01,
 #     logging_dir=f"{checkpoint_dir}/logs",
 #     logging_steps=2500,
