@@ -331,8 +331,8 @@ def main():
 		result_list, candidates = best_of_n(problems, n=n)
 		for i in range(len(problems)):
 			candidates_i = candidates[i * n:(i + 1) * n]
-			print(type(result_list[i]))
-			print(type(result_list))
+			# print(type(result_list[i]))
+			# print(type(result_list))
 			tuple = result_list[i] # info1 : best_candidate, best_score, best_answer, answers
 			info1 = tuple[0]
 			info2 = tuple[1]
