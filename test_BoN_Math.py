@@ -344,11 +344,14 @@ def main():
 			if check_solution_matching(info2[2], solutions[i]):
 				match_2 = True
 
-			best_match = False
-			for answer in info1[3]:
-				if check_solution_matching(answer, solutions[i]):
-					best_match = True
-					break
+			if match_1 or match_2:
+				best_match = True
+			else:
+				best_match = False
+				for answer in info1[3]:
+					if check_solution_matching(answer, solutions[i]):
+						best_match = True
+						break
 			ret_list.append({
 				"problem": problems[i],
 				"solution": solutions[i],
@@ -411,12 +414,15 @@ def main():
 		# 	if i % 100 == 0:
 		# 		print(f"Processed {i} problems...")
 		total_problems = len(dataset)
-		total_matched = sum(1 for r in results if r['match'])
-		total_other_matched = sum(1 for r in results if r['other_match'])
-		print(f"Total problems: {total_problems}, Matched: {total_matched}, Other matched: {total_other_matched}")
-		print(f"Accuracy: {total_matched / total_problems * 100:.2f}%")
-		print(f"Other match accuracy: {total_other_matched / total_problems * 100:.2f}%")
-	
+		total_matched_1 = sum(1 for r in results if r['match_1'])
+		total_matched_2 = sum(1 for r in results if r['match_2'])
+		total_best_matched = sum(1 for r in results if r['Best_match'])
+
+		print(f"Total problems: {total_problems}, Matched 1: {total_matched_1}, Matched 2: {total_matched_2}, Best matched: {total_best_matched}")
+		print(f"Accuracy 1: {total_matched_1 / total_problems * 100:.2f}%")
+		print(f"Accuracy 2: {total_matched_2 / total_problems * 100:.2f}%")
+		print(f"Best match accuracy: {total_best_matched / total_problems * 100:.2f}%")
+
 	datasets_dir = os.environ['FAST'] + "/rpisano1/datasets/"
 
 	ds_local = load_dataset("json", data_files={
