@@ -162,6 +162,7 @@ def main():
 		# return [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
 		generations = llm.generate(prompt_token_ids=prompt_token_ids, sampling_params=sampling_params)
 		generated_critiques = [gen.outputs[0].text for gen in generations]
+		print(generated_critiques)
 		answers = [extract_answer(critique) for critique in generated_critiques]
 		for i, answer in enumerate(answers):
 			if answer is None:
