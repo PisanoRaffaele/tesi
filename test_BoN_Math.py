@@ -99,6 +99,7 @@ def main():
 		torch_dtype=torch.float16,
 		local_files_only=True,
 	)
+
 	reward_model = RewardModel(base_model)
 
 	reward_model1 = PeftModel.from_pretrained(
@@ -135,7 +136,7 @@ def main():
 		max_num_seqs=32,
 	)
 
-	sampling_params = SamplingParams(temperature=0.7, max_tokens=2048, seed=42)
+	sampling_params = SamplingParams(temperature=0.7, max_tokens=2048)
 
 	def apply_chat_template(toker, messages):
 		input_prompt = toker.apply_chat_template(messages, add_generation_prompt=True, tokenize=False)
@@ -201,6 +202,7 @@ def main():
 		if torch.isnan(reward_logits2).any():
 			print("⚠️ Warning: NaN values found in logits!")
 		del out2
+		
 
 		marker_id = tokenizer.encode(f"ки", add_special_tokens=False)
 		input_ids = batch_tokenized["input_ids"].detach().cpu()
