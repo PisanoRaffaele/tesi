@@ -129,7 +129,7 @@ def main():
 
 	llm = LLM(
 		model=local_model_path, tokenizer=local_model_path,
-		gpu_memory_utilization=0.5,
+		gpu_memory_utilization=0.35,
 		tensor_parallel_size=world_size,
 		enable_prefix_caching=True, swap_space=0,
 		max_num_seqs=32,
