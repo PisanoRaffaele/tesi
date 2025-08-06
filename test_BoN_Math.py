@@ -430,7 +430,7 @@ def main():
 		"test": datasets_dir + "gsm8k_test.json"
 	})
 
-	process_dataset(ds_local['train'], "gsm8k_train", n=8)
+	process_dataset(ds_local['test'], "gsm8k_test", n=8)
 
 if __name__ == "__main__":
     dist.init_process_group(backend="nccl")
