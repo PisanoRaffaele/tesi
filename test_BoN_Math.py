@@ -93,17 +93,25 @@ def main():
 	lora_final_model_dir1 = os.environ['FAST'] + "/rpisano1/checkpoints_4_NEW_PRM800k_PDDL/"
 	lora_final_model_dir2 = os.environ['FAST'] + "/rpisano1/checkpoints_3_NEW_PRM800k/"
 
-	base_model = AutoModelForCausalLM.from_pretrained(
+	base_model1 = AutoModelForCausalLM.from_pretrained(
 		local_model_path,
 		trust_remote_code=True,
 		torch_dtype=torch.float16,
 		local_files_only=True,
 	)
 
-	reward_model = RewardModel(base_model)
+	base_model2 = AutoModelForCausalLM.from_pretrained(
+		local_model_path,
+		trust_remote_code=True,
+		torch_dtype=torch.float16,
+		local_files_only=True,
+	)
+
+	reward_model1 = RewardModel(base_model1)
+	reward_model2 = RewardModel(base_model2)
 
 	reward_model1 = PeftModel.from_pretrained(
-		reward_model,
+		reward_model1,
 		lora_final_model_dir1,
 		torch_dtype=torch.float16
 	)
@@ -116,7 +124,7 @@ def main():
 	reward_model1.eval()
 
 	reward_model2 = PeftModel.from_pretrained(
-		reward_model,
+		reward_model2,
 		lora_final_model_dir2,
 		torch_dtype=torch.float16
 	)
@@ -136,7 +144,7 @@ def main():
 		max_num_seqs=32,
 	)
 
-	sampling_params = SamplingParams(temperature=0.7, max_tokens=2048)
+	sampling_params = SamplingParams(temperature=0.7, max_tokens=4096)
 
 	def apply_chat_template(toker, messages):
 		input_prompt = toker.apply_chat_template(messages, add_generation_prompt=True, tokenize=False)
